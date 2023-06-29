@@ -26,8 +26,8 @@ function SignRunner () {
         this.goMine();
         // 进行签到
         this.doSign();
-        sleep(3000)
-        !config._debugging && commonFunctions.minimize(_package_name)
+        // sleep(3000)
+        // !config._debugging && commonFunctions.minimize(_package_name)
     }
     this.launchApp = function () {
         launch(_package_name)
@@ -60,13 +60,7 @@ function SignRunner () {
         if (clickMine) {
             automator.clickCenter(clickMine)
             sleep(1000);
-            FloatyInstance.setFloatyText('查看有没有我知道了');
-            let know = widgetUtils.widgetGetById('com.qidian.QDReader:id/tvTitle', 3000);
-            if (know) {
-                // 找到我知道了
-                automator.click(know.bounds().centerX(), know.bounds().centerY());
-                sleep(1000);
-            }
+            this.goWelfare();
         } else {
             FloatyInstance.setFloatyText('未找到 我')
             if (this.restartLimit-- >= 0) {
@@ -78,15 +72,54 @@ function SignRunner () {
         }
     }
 
-    this.doSign = function () {
+    this.goWelfare = function () {
         FloatyInstance.setFloatyText('查找福利中心')
-        let signEntry = widgetUtils.widgetGetById('com.qidian.QDReader:id/tvTitle', 3000);
+        let signEntry = widgetUtils.widgetGetOne('福利中心', 3000);
         if (signEntry) {
             // 找到福利中心
             automator.click(signEntry.bounds().centerX(), signEntry.bounds().centerY())
             sleep(1000);
+        }
+    }
+
+    this.doSign = function () {
+        FloatyInstance.setFloatyText('点击按钮观看视频');
+        let doBtn = widgetUtils.widgetGetOne('看第1个视频' || '看第2个视频' || '看第3个视频' || '看第4个视频' || '看第5个视频' || '看第6个视频' || '看第7个视频' || '看第8个视频');
+        if (doBtn) {
+            // 观看视频
+            automator.click(doBtn.bounds().centerX(), doBtn.bounds().centerY())
+            sleep(1000);
+            this.watchVideo();
         } else {
             // 未找到福利中心
+            FloatyInstance.setFloatyText('未找到观看视频，查找是否已经全部看完');
+            sleep(1000);
+            let doneBtn = widgetUtils.widgetGetOne('已看完', 3000);
+            if (doneBtn) {
+                this.setExecuted()
+            }
+        }
+    }
+
+    this.watchVideo = function () {
+        FloatyInstance.setFloatyText('观看视频');
+        // 观看视频
+        let curText = widgetUtils.widgetGetOne('已观看视频15秒', 30000);
+        if(curText) {
+            automator.back();
+            sleep(1000);
+            FloatyInstance.setFloatyText('观看视频后弹窗、我知道了');
+            let knowText = widgetUtils.widgetGetOne('我知道了', 2000);
+            if(knowText) {
+                automator.click(knowText.bounds().centerX(), knowText.bounds().centerY());
+            } else {
+                automator.back();
+            }
+            this.doSign();
+        } else {
+            FloatyInstance.setFloatyText('未观看视频，返回到福利中心');
+            automator.back();
+            this.goWelfare();
         }
     }
 }
