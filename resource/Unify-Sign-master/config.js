@@ -13,7 +13,7 @@ let extendSignConfig = require('./signConfig.js')
 let custom_config = files.exists('./extends/CustomConfig.js') ? require('./extends/CustomConfig.js') : { supported_signs: [] }
 custom_config = custom_config || { supported_signs: [] }
 let default_config = {
-  password: '',
+  password: '2489',
   timeout_unlock: 1000,
   timeout_findOne: 1000,
   timeout_existing: 8000,
@@ -88,29 +88,29 @@ let default_config = {
       name: '蚂蚁积分签到',
       taskCode: 'AntCredits',
       script: 'AntCredits.js',
-      enabled: true
+      enabled: false
     },
     {
       name: '全家签到',
       taskCode: 'Fami',
       script: 'Fami.js',
-      enabled: true
+      enabled: false
     },
     {
       name: '京东签到',
       taskCode: 'JingDong',
       script: 'JingDongBeans.js',
-      enabled: true,
+      enabled: false,
       subTasks: [
         {
           taskCode: 'beanSign',
           taskName: '签到',
-          enabled: true,
+          enabled: false,
         },
         {
           taskCode: 'plantBean',
           taskName: '种豆得豆',
-          enabled: true,
+          enabled: false,
         }
       ]
     },
@@ -118,34 +118,34 @@ let default_config = {
       name: '米游社-原神签到',
       taskCode: 'MiHoYo',
       script: 'MiHoYou.js',
-      enabled: true
+      enabled: false
     },
     {
       name: '淘金币签到',
       taskCode: 'Taobao',
       script: 'Taobao-Coin.js',
-      enabled: true
+      enabled: false
     },
     {
       name: '叮咚签到',
       taskCode: 'DingDong',
       script: 'DingDong.js',
-      enabled: true,
+      enabled: false,
       subTasks: [
         {
           taskCode: 'creditSign',
           taskName: '积分签到',
-          enabled: true,
+          enabled: false,
         },
         {
           taskCode: 'fishpond',
           taskName: '鱼塘签到',
-          enabled: true,
+          enabled: false,
         },
         {
           taskCode: 'orchard',
           taskName: '叮咚果园',
-          enabled: true,
+          enabled: false,
         }
       ]
     },
@@ -153,31 +153,31 @@ let default_config = {
       name: '微博积分签到',
       taskCode: 'Weibo',
       script: 'Weibo.js',
-      enabled: true
+      enabled: false
     },
     {
       name: '芭芭农场',
       taskCode: 'BBFarm',
       script: 'BBFarm.js',
-      enabled: true
+      enabled: false
     },
     {
       name: '淘宝现金签到',
       taskCode: 'TaobaoSign',
       script: 'Taobao-Sign.js',
-      enabled: true
+      enabled: false
     },
     {
       name: '饿了么吃货豆',
       taskCode: 'Eleme',
       script: 'Eleme.js',
-      enabled: true
+      enabled: false
     },
     {
       name: '什么值得买',
       taskCode: 'Smzdm',
       script: 'Smzdm.js',
-      enabled: true
+      enabled: false
     }
   ].concat(custom_config.supported_signs || [])
 }
