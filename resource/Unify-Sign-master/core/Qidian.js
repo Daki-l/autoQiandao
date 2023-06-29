@@ -79,47 +79,60 @@ function SignRunner () {
             // 找到福利中心
             automator.click(signEntry.bounds().centerX(), signEntry.bounds().centerY())
             sleep(1000);
+            let vitality = widgetUtils.widgetGetOne('活力', 3000);
+            if(vitality) {
+                sleep(1000);
+            }
         }
     }
 
     this.doSign = function () {
         FloatyInstance.setFloatyText('点击按钮观看视频');
-        let doBtn = widgetUtils.widgetGetOne('看第1个视频' || '看第2个视频' || '看第3个视频' || '看第4个视频' || '看第5个视频' || '看第6个视频' || '看第7个视频' || '看第8个视频');
-        if (doBtn) {
-            // 观看视频
-            automator.click(doBtn.bounds().centerX(), doBtn.bounds().centerY())
-            sleep(1000);
-            this.watchVideo();
-        } else {
-            // 未找到福利中心
-            FloatyInstance.setFloatyText('未找到观看视频，查找是否已经全部看完');
-            sleep(1000);
-            let doneBtn = widgetUtils.widgetGetOne('已看完', 3000);
-            if (doneBtn) {
-                this.setExecuted()
+
+        //看视频1-8
+        for (let index = 1; index < 11; index++) {
+            let caption = "第" + parseInt(index) +"个"   
+            var meButton = undefined
+            if(index>8){
+                meButton = text("看视频").findOnce();
+            }else{
+                meButton = textMatches("看第\\d+个视频").findOnce();
+                if (meButton == undefined){
+                    continue
+                }
+                caption = meButton.text()        
             }
+            FloatyInstance.setFloatyText("看视频" + caption)
+            if (meButton == undefined){
+                FloatyInstance.setFloatyText("没有找到:" + caption)
+                continue
+            }    
+            meButton.click()
+            FloatyInstance.setFloatyText("看视频等待20s" + caption)
+            sleep(20000)
+            this.close()  
+            sleep(2000)
+            FloatyInstance.setFloatyText("查找开心收下" + caption)
+            var meButton =text("开心收下").findOnce()
+            if (meButton != undefined){
+                meButton = meButton.parent();
+                meButton.click()
+            }               
+            FloatyInstance.setFloatyText("看视频结束: " + caption)
+            sleep(2000)
         }
     }
 
-    this.watchVideo = function () {
-        FloatyInstance.setFloatyText('观看视频');
-        // 观看视频
-        let curText = widgetUtils.widgetGetOne('已观看视频15秒', 30000);
-        if(curText) {
-            automator.back();
-            sleep(1000);
-            FloatyInstance.setFloatyText('观看视频后弹窗、我知道了');
-            let knowText = widgetUtils.widgetGetOne('我知道了', 2000);
-            if(knowText) {
-                automator.click(knowText.bounds().centerX(), knowText.bounds().centerY());
-            } else {
-                automator.back();
-            }
-            this.doSign();
-        } else {
-            FloatyInstance.setFloatyText('未观看视频，返回到福利中心');
-            automator.back();
-            this.goWelfare();
+    this.close = function () {
+        // back() 失效 原因未知
+        var meButton =className("android.widget.Image").text("cross").findOnce()
+        if (meButton == undefined){
+            meButton = className("android.widget.Image").text("此图片未加标签。打开右上角的“更多选项”菜单即可获取图片说明。").findOnce()
+        }    
+        if (meButton != undefined){
+            meButton = meButton.parent();
+            toastLog("找到了关闭按钮")
+            meButton.click()
         }
     }
 }
